@@ -26,4 +26,16 @@ public class RelayMonitorTest {
         relay.turnOn();
         assertEquals("ON", relay.getStatus());
     }
+@Test
+void testRelayOffNormally() {
+    assertEquals("NORMAL",
+        Main.checkRelay("Relay 2", false, false, true));
+}
+
+@Test
+void testRelayMismatchWhenFeedbackIsOn() {
+    assertEquals("MISMATCH",
+        Main.checkRelay("Relay 2", false, true, true));
+}
+
 }
