@@ -31,6 +31,23 @@ pipeline {
                 bat 'mvn clean test'
             }
         }
+        stage('Generate HTML Report') {
+    steps {
+        bat 'mvn surefire-report:report'
+    }
+}
+stage('Publish HTML Report') {
+    steps {
+        publishHTML(target: [
+            reportDir: 'target/site',
+            reportFiles: 'surefire-report.html',
+            reportName: 'JUnit Test Report',
+            keepAll: true,
+            alwaysLinkToLastBuild: true,
+            allowMissing: false
+        ])
+    }
+}
 
         stage('Package') {
             steps {
