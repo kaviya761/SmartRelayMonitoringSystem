@@ -22,7 +22,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Get scenario from command-line argument
         String scenario = args.length > 0
                 ? args[0].toUpperCase()
                 : "ALL";
@@ -57,7 +56,11 @@ public class Main {
         String status = checkRelay(
                 relayName, relayOn, feedbackOn, communicationOK);
 
-        if (scenario.equals("ALL") || scenario.equals(status)) {
+        String normalizedStatus = status.replace(" ", "_");
+
+        if (scenario.equals("ALL")
+                || scenario.equals(normalizedStatus)) {
+
             System.out.println("\n" + relayName);
             System.out.println("Relay Status: " + status);
         }
