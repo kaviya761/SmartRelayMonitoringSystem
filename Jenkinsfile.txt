@@ -21,6 +21,11 @@ pipeline {
                 bat 'mvn clean package'
             }
         }
+        stage('Run Selected Relay Scenario') {
+    steps {
+        bat 'java -jar target\\SmartRelayMonitoringSystem-1.0-SNAPSHOT.jar "%RELAY_SCENARIO%"'
+    }
+}
 
         stage('Generate HTML Report') {
             steps {
