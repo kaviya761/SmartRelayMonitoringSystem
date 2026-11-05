@@ -1,6 +1,18 @@
 
 pipeline {
     agent any
+    parameters {
+    choice(
+        name: 'RELAY_SCENARIO',
+        choices: [
+            'ALL',
+            'NORMAL',
+            'MISMATCH',
+            'COMMUNICATION_FAILURE'
+        ],
+        description: 'Select relay test scenario'
+    )
+}
 
     tools {
         jdk 'JDK17'
