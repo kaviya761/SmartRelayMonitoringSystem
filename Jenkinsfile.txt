@@ -1,57 +1,53 @@
 
 pipeline {
     agent any
-    parameters {
-    choice(
-        name: 'RELAY_SCENARIO',
-        choices: [
-            'ALL',
-            'NORMAL',
-            'MISMATCH',
-            'COMMUNICATION_FAILURE'
-        ],
-        description: 'Select relay test scenario'
-    )
-}
-
-    tools {
-        jdk 'JDK17'
-        maven 'Maven'
-    }
 
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'Smart Relay Monitoring System'
+                echo 'Checking out project from GitHub'
+                checkout scm
             }
         }
 
         stage('Build and Test') {
             steps {
+                echo 'Building project and running JUnit tests'
                 bat 'mvn clean test'
             }
         }
+
         stage('Generate HTML Report') {
-    steps {
-        bat 'mvn -B -Dmaven.repo.local="%WORKSPACE%\\.m2\\repository" surefire-report:report'
-    }
-}
-stage('Publish HTML Report') {
-    steps {
-        publishHTML(target: [
-            reportDir: 'target/site',
-            reportFiles: 'surefire-report.html',
-            reportName: 'JUnit Test Report',
-            keepAll: true,
-            alwaysLinkToLastBuild: true,
-            allowMissing: false
-        ])
-    }
-}
+            steps {
+                echo 'Generating HTML test report'
+                bat 'mvn surefire-report:report-only'
+            }
+        }
 
         stage('Package') {
             steps {
-                bat 'mvn package'
+                echo 'Creating executable JAR file'
+                bat 'mvn package -DskipTests'
+            }
+        }
+
+        stage('Publish JUnit Results') {
+            steps {
+                junit 'target/surefire-reports/*.xml'
+            }
+        }
+
+        stage('Publish HTML Report') {
+            steps {
+                publishHTML(target: [
+                    reportName: 'JUnit Test Report',
+                    reportDir: 'target/site',
+                    reportFiles: 'surefire-report.html',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: false
+                ])
             }
         }
     }
@@ -59,9 +55,15 @@ stage('Publish HTML Report') {
     post {
         success {
             echo 'Build and tests completed successfully!'
+            echo 'HTML Test Report published successfully!'
         }
+
         failure {
             echo 'Build failed. Please check the console output.'
+        }
+
+        always {
+            echo 'Jenkins pipeline execution completed.'
         }
     }
 }
