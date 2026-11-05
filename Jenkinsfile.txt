@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Generate HTML Report') {
     steps {
-        bat 'mvn surefire-report:report'
+        bat 'mvn -B -Dmaven.repo.local="%WORKSPACE%\\.m2\\repository" surefire-report:report'
     }
 }
 stage('Publish HTML Report') {
