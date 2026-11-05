@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     stages {
 
         stage('Checkout') {
@@ -14,7 +18,7 @@ pipeline {
         stage('Build and Test') {
             steps {
                 echo 'Building project and running JUnit tests'
-                bat 'mvn clean test'
+                bat 'mvn clean package'
             }
         }
 
@@ -22,13 +26,6 @@ pipeline {
             steps {
                 echo 'Generating HTML test report'
                 bat 'mvn surefire-report:report-only'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                echo 'Creating executable JAR file'
-                bat 'mvn package -DskipTests'
             }
         }
 
@@ -42,8 +39,8 @@ pipeline {
             steps {
                 publishHTML(target: [
                     reportName: 'JUnit Test Report',
-                    reportDir: 'target/site',
-                    reportFiles: 'surefire-report.html',
+                    reportDir: 'target/reports',
+                    reportFiles: 'surefire.html',
                     keepAll: true,
                     alwaysLinkToLastBuild: true,
                     allowMissing: false
