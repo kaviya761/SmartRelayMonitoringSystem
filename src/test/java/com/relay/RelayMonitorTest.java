@@ -37,5 +37,12 @@ void testRelayMismatchWhenFeedbackIsOn() {
     assertEquals("MISMATCH",
         Main.checkRelay("Relay 2", false, true, true));
 }
+@Test
+void testCommunicationFailure() {
+    assertEquals(
+        "COMMUNICATION FAILURE",
+        Main.checkRelay("Relay 4", true, false, false)
+    );
+}
 
 }
